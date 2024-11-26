@@ -1,0 +1,6 @@
+# REPO SPECIFIC
+.gptignore
+*prompt*
+*copy*
+*GEN_REPO_CONTEXT.md*
+.env
