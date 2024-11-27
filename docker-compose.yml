@@ -41,7 +41,7 @@ services:
     build:
       context: ./tailscale
       dockerfile: Dockerfile
-    container_name: tailscale
+    container_name: tailscale-agent
     privileged: true
     volumes:
       - /var/run/tailscale:/var/run/tailscale
