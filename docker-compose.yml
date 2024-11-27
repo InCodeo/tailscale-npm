@@ -37,7 +37,7 @@ services:
     networks:
       - npm_network
 
-  tailscale:
+  tailscale-agent:
     build:
       context: ./tailscale
       dockerfile: Dockerfile
