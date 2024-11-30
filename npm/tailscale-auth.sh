@@ -1,4 +1,3 @@
-# File: tailscale-auth.sh
 #!/command/with-contenv bash
 
 if [ ! -z "$TAILSCALE_AUTH_KEY" ]; then
