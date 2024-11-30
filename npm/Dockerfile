@@ -16,13 +16,21 @@ RUN mkdir -p /var/run/tailscale \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy init script to the correct s6-overlay path
-COPY tailscale-init.sh /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
+# Setup S6 service structure for Tailscale
+RUN mkdir -p /etc/services.d/tailscale
+
+# Copy service definition files
+COPY services.d/tailscale/run /etc/services.d/tailscale/run
+COPY services.d/tailscale/finish /etc/services.d/tailscale/finish
 
 # Set correct permissions
-RUN chmod +x /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
+RUN chmod +x /etc/services.d/tailscale/run /etc/services.d/tailscale/finish
 
-# Ensure Tailscale can access required devices
+# Setup Tailscale device
 RUN mkdir -p /dev/net && \
     mknod /dev/net/tun c 10 200 && \
     chmod 600 /dev/net/tun
+
+# Copy authentication script
+COPY tailscale-auth.sh /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
+RUN chmod +x /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale

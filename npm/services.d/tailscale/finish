@@ -1,0 +1,4 @@
+# File: services.d/tailscale/finish
+#!/command/with-contenv bash
+
+echo "[Tailscale] Service exited with status $1"
