@@ -12,6 +12,6 @@ RUN mkdir -p /var/run/tailscale && \
     rm -rf /var/lib/apt/lists/*
 
 # Add Tailscale startup to the init script
-COPY tailscale-init.sh /etc/cont-init.d/tailscale
+COPY tailscale-init.sh /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
 
 RUN chmod +x /etc/cont-init.d/tailscale
