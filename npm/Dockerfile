@@ -1,8 +1,8 @@
-# Use the official NPM image as base
 FROM jc21/nginx-proxy-manager:latest
 
 # Install Tailscale and required dependencies
-RUN mkdir -p /var/run/tailscale /etc/cont-init.d && \
+RUN mkdir -p /var/run/tailscale \
+    /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d && \
     apt-get update && \
     apt-get install -y \
     curl \
@@ -16,9 +16,11 @@ RUN mkdir -p /var/run/tailscale /etc/cont-init.d && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy init scripts
-COPY tailscale-init.sh /etc/cont-init.d/tailscale
-RUN chmod +x /etc/cont-init.d/tailscale
+# Copy init script to the correct s6-overlay path
+COPY tailscale-init.sh /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
+
+# Set correct permissions
+RUN chmod +x /package/admin/s6-overlay-3.1.5.0/etc/s6-rc/scripts/cont-init.d/tailscale
 
 # Ensure Tailscale can access required devices
 RUN mkdir -p /dev/net && \
