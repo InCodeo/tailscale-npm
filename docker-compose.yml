@@ -2,22 +2,30 @@ version: '3'
 
 services:
   npm:
-    image: 'jc21/nginx-proxy-manager:latest'
+    build:
+      context: ./npm
+      dockerfile: Dockerfile
     container_name: npm
     restart: unless-stopped
-    ports:
-      - '80:80'     # HTTP Traffic
-      - '81:81'     # Admin Web UI
-      - '443:443'   # HTTPS Traffic
+    privileged: true
+    cap_add:
+      - NET_ADMIN
     volumes:
       - npm_data:/data
       - npm_letsencrypt:/etc/letsencrypt
+      - /var/run/tailscale:/var/run/tailscale
+      - tailscale_npm:/var/lib/tailscale
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
     environment:
       DB_MYSQL_HOST: "npm-db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "${NPM_DB_PASSWORD}"
       DB_MYSQL_NAME: "npm"
+      TAILSCALE_AUTH_KEY: "${TAILSCALE_AUTH_KEY}"
     depends_on:
       - npm-db
     networks:
@@ -37,30 +45,11 @@ services:
     networks:
       - npm_network
 
-  tailscale-agent:
-    build:
-      context: ./tailscale
-      dockerfile: Dockerfile
-    container_name: tailscale-agent
-    privileged: true
-    volumes:
-      - /var/run/tailscale:/var/run/tailscale
-      - tailscale_state:/var/lib/tailscale
-      - ./tailscale/conf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
-      - ./tailscale/conf/nginx.conf:/etc/nginx/http.d/default.conf
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-    environment:
-      - TAILSCALE_AUTH_KEY=${TAILSCALE_AUTH_KEY}
-    networks:
-      - npm_network
-
 volumes:
   npm_data:
   npm_letsencrypt:
   npm_db_data:
-  tailscale_state:
+  tailscale_npm:
 
 networks:
   npm_network:
