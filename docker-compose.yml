@@ -46,6 +46,8 @@ services:
     volumes:
       - /var/run/tailscale:/var/run/tailscale
       - tailscale_state:/var/lib/tailscale
+      - ./tailscale/conf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+      - ./tailscale/conf/nginx.conf:/etc/nginx/http.d/default.conf
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
